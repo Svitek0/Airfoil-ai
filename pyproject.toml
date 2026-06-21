@@ -1,0 +1,32 @@
+[project]
+name = "airfoil-ai"
+version = "0.1.0"
+description = "Neural surrogate model for 2D airfoil aerodynamics"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "airfrans>=0.1.5.1",
+    "h5py>=3.16.0",
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.11.0",
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "scikit-learn>=1.9.0",
+    "scipy>=1.18.0",
+    "segmentation-models-pytorch>=0.5.0",
+    "streamlit>=1.58.0",
+    "torch>=2.0.0",
+    "torchvision>=0.18.0",
+    "tqdm>=4.68.3",
+    "wandb>=0.27.2",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu126" }
+torchvision = { index = "pytorch-cu126" }
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true

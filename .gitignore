@@ -1,0 +1,21 @@
+﻿# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Data a modely - velké soubory nepatří do gitu
+data/
+models/
+*.pth
+*.npz
+*.h5
+wandb/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
