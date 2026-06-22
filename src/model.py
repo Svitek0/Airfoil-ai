@@ -13,8 +13,8 @@ def build_unet():
     return smp.Unet(
         encoder_name="resnet34",
         encoder_weights=None,
-        in_channels=3,   # SDF + úhel + rychlost
-        classes=3,       # tlak + u + v
+        in_channels=3,
+        classes=3,
     )
 
 

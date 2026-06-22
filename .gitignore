@@ -4,12 +4,15 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Data a modely - velké soubory nepatří do gitu
+# Data - velké soubory, NEpatří do gitu
 data/
-models/
-*.pth
-*.npz
+processed.npz
 *.h5
+
+# Modely - PŘÍMO commitujeme best_model.pth a norm_stats.npz pro deployment!
+# Ignorujeme jen pomocné/dočasné modely:
+models/last_model.pth
+models/training_log.txt
 wandb/
 
 # IDE
@@ -19,3 +22,6 @@ wandb/
 # OS
 .DS_Store
 Thumbs.db
+
+# Streamlit secrets (kdyby byly)
+.streamlit/secrets.toml

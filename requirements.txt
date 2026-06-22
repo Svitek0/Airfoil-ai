@@ -1,0 +1,9 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0
+torchvision>=0.18.0
+segmentation-models-pytorch>=0.3.4
+numpy>=1.24.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+streamlit>=1.30.0
+streamlit-drawable-canvas>=0.9.0
