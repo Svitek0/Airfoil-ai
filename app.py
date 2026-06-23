@@ -60,8 +60,7 @@ except Exception as e:
 
 st.markdown('<p class="main-title">Airfoil AI</p>', unsafe_allow_html=True)
 st.markdown(
-    '<p class="subtitle">Neural surrogate model predicting 2D airflow around airfoils — '
-    'roughly 1000× faster than the CFD simulation it learned from.</p>',
+    '<p class="subtitle">Neural surrogate model predicting 2D airflow around airfoils. Development assisted by Claude Opus 4.8</p>',
     unsafe_allow_html=True,
 )
 st.markdown("---")
@@ -138,6 +137,20 @@ if not geometry_ok:
     st.info("Upload a .dat file to see the prediction.")
     st.stop()
 
+if st.sidebar.button("AoA Sweep"):
+    aoa_sweep = True
+else:
+    aoa_sweep = False
+
+profile_name = "Airfoil"
+if input_mode == "NACA generator":
+    profile_name = f"NACA {m}{p}{t:02d}"
+elif input_mode == "Upload .dat file" and uploaded is not None:
+    profile_name = uploaded.name.rsplit(".",1)[0]
+else:
+    profile_name = "Hand-drawn shape"
+
+
 input_tensor = build_input(sdf, angle, velocity, norm_stats)
 pressure, u, v = predict(model, input_tensor, norm_stats, device=DEVICE)
 speed = np.sqrt(u**2 + v**2)
@@ -176,7 +189,7 @@ def crop_to_view(field):
     return field[i0:i1, j0:j1]
 
 
-def plot_field(field, title, cmap, label, symmetric=False):
+def plot_field(field, title, cmap, label, profile_name, symmetric=False):
     field_c = crop_to_view(field)
     mask_c = crop_to_view(mask.astype(float))
 
@@ -197,7 +210,7 @@ def plot_field(field, title, cmap, label, symmetric=False):
     ax.contour(gx, gy, mask_c, levels=[0.5], colors="white", linewidths=1.5)
     ax.contour(gx, gy, mask_c, levels=[0.5], colors="black", linewidths=0.6)
 
-    ax.set_title(title, fontsize=13, fontweight="bold", color="#888")
+    ax.set_title(f"{title} — {profile_name}", fontsize=13, fontweight="bold", color="#888")
     ax.set_xlabel("x/c", color="#888")
     ax.set_ylabel("y/c", color="#888")
     ax.tick_params(colors="#888")
@@ -212,13 +225,13 @@ def plot_field(field, title, cmap, label, symmetric=False):
 tab1, tab2, tab3 = st.tabs(["Pressure", "Velocity", "Streamlines"])
 
 with tab1:
-    st.pyplot(plot_field(pressure, "Pressure field", "RdBu_r", "Pressure [Pa]",
+    st.pyplot(plot_field(pressure, "Pressure field", "RdBu_r", "Pressure [Pa]", profile_name,
                          symmetric=True))
     st.caption("Blue = suction (low pressure) above the airfoil — this is what generates "
                "lift. Red = higher pressure below and at the stagnation point.")
 
 with tab2:
-    st.pyplot(plot_field(speed, "Velocity magnitude", "viridis", "|U| [m/s]"))
+    st.pyplot(plot_field(speed, "Velocity magnitude", "viridis", "|U| [m/s]", profile_name))
     st.caption("Flow accelerates over the upper surface (higher speed → lower pressure). Darker region behind is the wake.")
 
 with tab3:
@@ -242,7 +255,7 @@ with tab3:
     ax.set_xlim(VIEW[0], VIEW[1])
     ax.set_ylim(VIEW[2], VIEW[3])
     ax.set_aspect("equal")
-    ax.set_title("Streamlines", fontsize=13, fontweight="bold", color="#888")
+    ax.set_title(f"Streamlines — {profile_name}", fontsize=13, fontweight="bold", color="#888")
     ax.set_xlabel("x/c", color="#888")
     ax.set_ylabel("y/c", color="#888")
     ax.tick_params(colors="#888")
@@ -251,6 +264,32 @@ with tab3:
     plt.tight_layout()
     st.pyplot(fig)
     st.caption("Streamlines trace the flow path. Color indicates local speed.")
+
+if aoa_sweep:
+    st.markdown("### Lift coefficient vs. angle of attack")
+    cl_list = []
+    for aoa in range(-5, 16, 1):
+        if input_mode == "Draw shape":
+            sdf_sweep, mask_sweep = canvas_to_sdf(canvas_result.json_data, canvas_size=400)
+        elif input_mode == "NACA generator":
+            sdf_sweep, mask_sweep = naca_to_sdf(m / 100, p / 10, t / 100, angle_deg=aoa)
+        elif uploaded_coords is not None:
+            sdf_sweep, mask_sweep = coordinates_to_sdf(uploaded_coords[0], uploaded_coords[1], angle_deg=aoa)
+        input_tensor = build_input(sdf_sweep, aoa, velocity, norm_stats)
+        pressure, u, v = predict(model, input_tensor, norm_stats, device=DEVICE)
+        cl_list.append(compute_cl(pressure, sdf_sweep, aoa, velocity))
+    fig, ax = plt.subplots(figsize=(7, 4.2))
+    fig.patch.set_alpha(0)
+    ax.patch.set_alpha(0)
+    ax.plot(range(-5, 16, 1), cl_list, marker='o', color="#2d6cdf")
+    ax.set_xlabel("Angle of attack [°]", color="#888")
+    ax.set_ylabel("C\u2097", color="#888")
+    ax.set_title(f"AoA Sweep — {profile_name}", color="#888")
+    ax.tick_params(colors="#888")
+    for spine in ax.spines.values():
+        spine.set_color("#888")
+    ax.set_xticks(range(-5, 16, 5))
+    st.pyplot(fig)
 
 st.markdown("---")
 st.markdown(
