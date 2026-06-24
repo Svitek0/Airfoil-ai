@@ -284,7 +284,7 @@ if aoa_sweep:
     ax.plot(range(-5, 16, 1), cl_list, marker='o', color="#2d6cdf")
     ax.set_xlabel("Angle of attack [°]", color="#888")
     ax.set_ylabel("C\u2097", color="#888")
-    ax.set_title(f"AoA Sweep — {profile_name}", color="#888")
+    ax.set_title(f"AoA Sweep — {profile_name}",  fontsize=13, fontweight="bold", color="#888")
     ax.tick_params(colors="#888")
     for spine in ax.spines.values():
         spine.set_color("#888")
