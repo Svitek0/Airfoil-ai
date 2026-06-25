@@ -25,3 +25,6 @@ Thumbs.db
 
 # Streamlit secrets (kdyby byly)
 .streamlit/secrets.toml
+
+# tools
+xfoil.exe
