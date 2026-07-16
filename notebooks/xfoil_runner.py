@@ -20,12 +20,12 @@ def run_xfoil(airfoil, velocity, alpha_start=-5, alpha_end=15, alpha_step=0.5,
     if isinstance(airfoil, str):
         airfoil_cmd = f"NACA {airfoil}"
     else:
-        x, y = airfoil                            # ← souřadnice PŘIJDOU z argumentu
-        dat_name = "temp_airfoil.dat"             # jak to vidí XFOIL
-        dat_path = os.path.join(".", dat_name)   # jak to vidí notebook
+        x, y = airfoil                            # ← coordinates come from the argument
+        dat_name = "temp_airfoil.dat"             # how XFOIL sees it
+        dat_path = os.path.join(".", dat_name)   # how the notebook sees it
         coords = np.column_stack([x, y])
         np.savetxt(dat_path, coords, header="airfoil", comments="")
-        airfoil_cmd = f"LOAD {dat_name}"          # ← XFOILu krátký název
+        airfoil_cmd = f"LOAD {dat_name}"          # ← short name for XFOIL
     
     polar_file = "polar.txt"
 

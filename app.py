@@ -78,7 +78,7 @@ input_mode = st.sidebar.radio("Geometry source",
 if input_mode == "NACA generator":
     st.sidebar.markdown("**NACA 4-digit parameters**")
     m = st.sidebar.slider("Max camber (m) [%]", 0, 9, 2)
-    p = st.sidebar.slider("Camber position (p) [×10%]", 1, 9, 4)
+    p = st.sidebar.slider("Camber position (p) [×10%]", 0, 9, 4)
     t = st.sidebar.slider("Thickness (t) [%]", 6, 24, 12)
     naca_code = f"{m}{p}{t:02d}"
     st.sidebar.markdown(f"→ **NACA {naca_code}**")

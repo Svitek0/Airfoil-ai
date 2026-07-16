@@ -2,7 +2,7 @@
 
 **Airfoil-AI is a neural surrogate model that predicts 2D airflow around airfoils from geometry alone**
 
-**[Live demo](https://airfoil-ai-fwz2lwpzhjm5phssckeq6b.streamlit.app)**
+**[Live demo](https://airfoilai.streamlit.app)**
 
 ---
 
